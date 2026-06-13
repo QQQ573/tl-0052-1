@@ -18,9 +18,13 @@ export class GameScene extends Phaser.Scene {
   private scoreText!: Phaser.GameObjects.Text;
   private qualityText!: Phaser.GameObjects.Text;
   private progressText!: Phaser.GameObjects.Text;
-  private packingZone!: Phaser.GameObjects.Rectangle;
+  private packingZone!: Phaser.GameObjects.Zone;
   private stepIndicator!: Phaser.GameObjects.Group;
   private conveyorBelt!: Phaser.GameObjects.TileSprite;
+  private packingZoneX: number = 0;
+  private packingZoneY: number = 0;
+  private packingZoneWidth: number = 300;
+  private packingZoneHeight: number = 350;
   private conveyorSpeed: number = 1.5;
   private tickerOffset: number = 0;
   private isPaused: boolean = false;
@@ -170,37 +174,34 @@ export class GameScene extends Phaser.Scene {
     const width = this.scale.width;
     const height = this.scale.height;
 
-    const zoneX = width - 200;
-    const zoneY = height / 2 + 50;
-    const zoneWidth = 250;
-    const zoneHeight = 300;
+    this.packingZoneX = width - 180;
+    this.packingZoneY = height / 2 + 30;
 
     const zoneBg = this.add.graphics();
     GraphicsUtils.drawRoundedRect(
       zoneBg,
-      zoneX - zoneWidth / 2,
-      zoneY - zoneHeight / 2,
-      zoneWidth,
-      zoneHeight,
+      this.packingZoneX - this.packingZoneWidth / 2,
+      this.packingZoneY - this.packingZoneHeight / 2,
+      this.packingZoneWidth,
+      this.packingZoneHeight,
       16,
       parseInt(this.level.primaryColor.replace('#', ''), 16),
-      0.2,
+      0.15,
       parseInt(this.level.primaryColor.replace('#', ''), 16),
-      0.8,
+      0.6,
       3
     );
 
-    this.packingZone = this.add.rectangle(zoneX, zoneY, zoneWidth, zoneHeight, 0x000000, 0);
-    this.packingZone.setInteractive();
+    this.packingZone = this.add.zone(this.packingZoneX, this.packingZoneY, this.packingZoneWidth, this.packingZoneHeight).setInteractive();
 
-    this.add.text(zoneX, zoneY - zoneHeight / 2 + 30, '📋 包装区', {
-      fontSize: '24px',
+    this.add.text(this.packingZoneX, this.packingZoneY - this.packingZoneHeight / 2 + 25, '📋 包装区', {
+      fontSize: '22px',
       fontStyle: 'bold',
       color: this.level.primaryColor
     }).setOrigin(0.5);
 
-    this.add.text(zoneX, zoneY - zoneHeight / 2 + 60, '拖入食材按顺序组装', {
-      fontSize: '14px',
+    this.add.text(this.packingZoneX, this.packingZoneY - this.packingZoneHeight / 2 + 55, '拖入食材按顺序组装', {
+      fontSize: '13px',
       color: '#aaaaaa'
     }).setOrigin(0.5);
   }
@@ -211,12 +212,10 @@ export class GameScene extends Phaser.Scene {
 
   private updateStepIndicator(order: Order, currentStep: number): void {
     this.stepIndicator.clear(true);
-    const width = this.scale.width;
-    const zoneX = width - 200;
-    const stepY = this.scale.height / 2 - 80;
-    const stepSpacing = 50;
-    const maxVisibleSteps = 6;
-    const startIndex = Math.max(0, currentStep - 2);
+    const stepY = this.packingZoneY - this.packingZoneHeight / 2 - 60;
+    const stepSpacing = 45;
+    const maxVisibleSteps = 7;
+    const startIndex = Math.max(0, currentStep - 3);
     const visibleSteps = order.steps.slice(startIndex, startIndex + maxVisibleSteps);
 
     visibleSteps.forEach((stepId: string, index: number) => {
@@ -225,16 +224,16 @@ export class GameScene extends Phaser.Scene {
       const isCurrent = actualStepIndex === currentStep;
       const item = getItemById(this.level, stepId);
 
-      const stepX = zoneX - (visibleSteps.length * stepSpacing) / 2 + index * stepSpacing;
+      const stepX = this.packingZoneX - (visibleSteps.length * stepSpacing) / 2 + index * stepSpacing;
 
       const stepBg = this.add.graphics();
       const alpha = isCompleted ? 0.4 : (isCurrent ? 1 : 0.7);
       GraphicsUtils.drawRoundedRect(
         stepBg,
-        -20,
-        -20,
-        40,
-        40,
+        -18,
+        -18,
+        36,
+        36,
         8,
         item ? parseInt(item.color.replace('#', ''), 16) : 0x666666,
         alpha
@@ -245,21 +244,21 @@ export class GameScene extends Phaser.Scene {
 
       if (isCompleted) {
         const check = this.add.text(stepX, stepY, '✓', {
-          fontSize: '20px',
+          fontSize: '18px',
           color: '#ffffff'
         }).setOrigin(0.5);
         this.stepIndicator.add(check);
       } else if (isCurrent) {
-        const arrow = this.add.text(stepX, stepY - 35, '▼', {
-          fontSize: '16px',
+        const arrow = this.add.text(stepX, stepY - 30, '▼', {
+          fontSize: '14px',
           color: this.level.primaryColor
         }).setOrigin(0.5);
         this.stepIndicator.add(arrow);
       }
 
       if (item && !isCompleted) {
-        const label = this.add.text(stepX, stepY + 30, item.name, {
-          fontSize: '11px',
+        const label = this.add.text(stepX, stepY + 28, item.name, {
+          fontSize: '10px',
           color: isCurrent ? '#ffffff' : '#888888'
         }).setOrigin(0.5);
         this.stepIndicator.add(label);
@@ -268,10 +267,10 @@ export class GameScene extends Phaser.Scene {
   }
 
   private onOrderStart(order: Order): void {
+    this.clearPlacedItemsImmediate();
     this.updateOrderTicker(order);
     this.updateStepIndicator(order, 0);
     this.spawnConveyorItems(order);
-    this.clearPlacedItems();
   }
 
   private updateOrderTicker(order: Order): void {
@@ -307,11 +306,12 @@ export class GameScene extends Phaser.Scene {
       const startX = -100 - index * (itemSize + 80);
       const y = conveyorY + 40 + (index % 2 === 0 ? 0 : -30);
 
-      const container = GraphicsUtils.createItemContainer(this, item, startX, y, itemSize);
+      const container = GraphicsUtils.createItemContainer(this, item, startX, y, itemSize, true);
       container.setData('itemId', item.id);
       container.setData('item', item);
 
-      container.on('pointerdown', () => {
+      const hitZone = container.getData('hitZone') as Phaser.GameObjects.Zone | undefined;
+      hitZone?.on('pointerdown', () => {
         this.onItemDragStart(container);
       });
 
@@ -392,38 +392,107 @@ export class GameScene extends Phaser.Scene {
     const order = this.gameState.getCurrentOrder();
     if (!order) return;
 
-    this.addPlacedItem(this.draggedItem.item, stepIndex);
+    this.addPlacedItem(this.draggedItem.item, stepIndex, order.steps.length);
 
     const itemIndex = this.conveyorItems.indexOf(this.draggedItem.sprite);
     if (itemIndex > -1) {
       this.conveyorItems.splice(itemIndex, 1);
+      this.draggedItem.sprite.destroy();
     }
 
     this.updateStepIndicator(order, stepIndex + 1);
     this.updateUI();
   }
 
-  private addPlacedItem(item: Item, stepIndex: number): void {
-    const width = this.scale.width;
-    const zoneX = width - 200;
-    const zoneY = this.scale.height / 2 + 50;
+  private addPlacedItem(item: Item, stepIndex: number, totalSteps: number): void {
+    const itemSize = 45;
+    const stackSpacing = 18;
+    const baseY = this.packingZoneY + this.packingZoneHeight / 2 - 60;
+    const yOffset = -(stepIndex * stackSpacing);
 
-    const itemSize = 50;
-    const yOffset = (stepIndex * 25) - 80;
+    const container = this.add.container(this.packingZoneX, baseY + yOffset);
 
-    const container = GraphicsUtils.createItemContainer(this, item, zoneX, zoneY + yOffset, itemSize);
+    const shape = this.createStackedItemShape(item, itemSize);
+    container.add(shape);
+
     container.setAlpha(0);
-    container.setScale(0.5);
+    container.setScale(0.3);
 
     this.tweens.add({
       targets: container,
       alpha: 1,
       scale: 1,
-      duration: 300,
+      duration: 250,
       ease: 'Back.out'
     });
 
     this.placedItemSprites.push(container);
+  }
+
+  private createStackedItemShape(item: Item, size: number): Phaser.GameObjects.Graphics {
+    const graphics = this.add.graphics();
+    const halfSize = size / 2;
+
+    graphics.fillStyle(parseInt(item.color.replace('#', ''), 16), 1);
+    graphics.lineStyle(2, 0x000000, 0.4);
+
+    switch (item.shape) {
+      case 'circle':
+        graphics.fillCircle(0, 0, halfSize);
+        graphics.strokeCircle(0, 0, halfSize);
+        break;
+      case 'square':
+        graphics.fillRect(-halfSize * 0.9, -halfSize * 0.3, size * 0.9, size * 0.35);
+        graphics.strokeRect(-halfSize * 0.9, -halfSize * 0.3, size * 0.9, size * 0.35);
+        break;
+      case 'half-circle':
+        graphics.slice(0, 0, halfSize, Math.PI, 0, false);
+        graphics.fillPath();
+        graphics.strokePath();
+        break;
+      case 'rectangle':
+        graphics.fillRect(-halfSize, -halfSize * 0.15, size, size * 0.3);
+        graphics.strokeRect(-halfSize, -halfSize * 0.15, size, size * 0.3);
+        break;
+      case 'leaf':
+        graphics.fillEllipse(0, 0, size * 0.7, size * 0.3);
+        graphics.strokeEllipse(0, 0, size * 0.7, size * 0.3);
+        break;
+      case 'slice':
+        graphics.fillEllipse(0, 0, size * 0.9, size * 0.2);
+        graphics.strokeEllipse(0, 0, size * 0.9, size * 0.2);
+        break;
+      case 'ring':
+        graphics.beginPath();
+        graphics.arc(0, 0, halfSize * 0.4, 0, Math.PI * 2, false);
+        graphics.fillPath();
+        graphics.strokePath();
+        break;
+      case 'splash':
+        graphics.fillEllipse(0, 0, size * 0.8, size * 0.25);
+        graphics.strokeEllipse(0, 0, size * 0.8, size * 0.25);
+        break;
+      case 'strip':
+        graphics.fillRect(-halfSize * 0.2, -halfSize * 0.4, size * 0.4, size * 0.8);
+        graphics.strokeRect(-halfSize * 0.2, -halfSize * 0.4, size * 0.4, size * 0.8);
+        break;
+      case 'irregular':
+        graphics.fillEllipse(0, 0, size * 0.7, size * 0.5);
+        graphics.strokeEllipse(0, 0, size * 0.7, size * 0.5);
+        break;
+      default:
+        graphics.fillCircle(0, 0, halfSize);
+        graphics.strokeCircle(0, 0, halfSize);
+    }
+
+    return graphics;
+  }
+
+  private clearPlacedItemsImmediate(): void {
+    this.placedItemSprites.forEach(sprite => {
+      sprite.destroy();
+    });
+    this.placedItemSprites = [];
   }
 
   private clearPlacedItems(): void {
@@ -461,7 +530,7 @@ export class GameScene extends Phaser.Scene {
       this.orderTickerText.setText(`✅ 完成: ${order.name}!`);
     }
 
-    this.time.delayedCall(1000, () => {
+    this.time.delayedCall(800, () => {
       this.clearPlacedItems();
       this.updateUI();
     });
@@ -481,10 +550,10 @@ export class GameScene extends Phaser.Scene {
       alpha: 1,
       duration: 300,
       yoyo: true,
-      hold: 1000,
+      hold: 800,
       onComplete: () => {
         warning.destroy();
-        this.clearPlacedItems();
+        this.clearPlacedItemsImmediate();
         const order = this.gameState.getCurrentOrder();
         if (order) {
           this.updateStepIndicator(order, 0);
@@ -624,6 +693,11 @@ export class GameScene extends Phaser.Scene {
     this.gameState.updateTime(deltaSeconds);
 
     this.conveyorItems.forEach(container => {
+      const hitZone = container.getData('hitZone') as Phaser.GameObjects.Zone | undefined;
+      if (hitZone) {
+        hitZone.setPosition(container.x, container.y);
+      }
+
       if (this.draggedItem && this.draggedItem.sprite === container) return;
 
       container.x += this.conveyorSpeed;
@@ -637,6 +711,8 @@ export class GameScene extends Phaser.Scene {
       const pointer = this.input.activePointer;
       this.draggedItem.sprite.x = pointer.x;
       this.draggedItem.sprite.y = pointer.y;
+      const hitZone = this.draggedItem.sprite.getData('hitZone') as Phaser.GameObjects.Zone | undefined;
+      hitZone?.setPosition(pointer.x, pointer.y);
     }
 
     this.tickerOffset += 0.5;

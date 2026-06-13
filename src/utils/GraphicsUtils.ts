@@ -58,27 +58,15 @@ export class GraphicsUtils {
   }
 
   private static drawLeaf(graphics: Phaser.GameObjects.Graphics, r: number): void {
-    const g = graphics as any;
-    g.beginPath();
-    g.moveTo(0, -r);
-    g.bezierCurveTo(r * 0.8, -r * 0.5, r * 0.8, r * 0.5, 0, r);
-    g.bezierCurveTo(-r * 0.8, r * 0.5, -r * 0.8, -r * 0.5, 0, -r);
-    g.fillPath();
-    g.strokePath();
-
+    graphics.fillEllipse(0, 0, r * 1.4, r * 2);
+    graphics.strokeEllipse(0, 0, r * 1.4, r * 2);
     graphics.lineStyle(1, 0x000000, 0.2);
-    graphics.beginPath();
-    graphics.moveTo(0, -r * 0.8);
-    graphics.lineTo(0, r * 0.8);
-    graphics.strokePath();
+    graphics.lineBetween(0, -r * 0.8, 0, r * 0.8);
   }
 
   private static drawSlice(graphics: Phaser.GameObjects.Graphics, r: number): void {
-    const g = graphics as any;
-    g.beginPath();
-    g.ellipse(0, 0, r, r * 0.3, 0, 0, Math.PI * 2);
-    g.fillPath();
-    g.strokePath();
+    graphics.fillEllipse(0, 0, r * 2, r * 0.6);
+    graphics.strokeEllipse(0, 0, r * 2, r * 0.6);
   }
 
   private static drawRing(graphics: Phaser.GameObjects.Graphics, r: number): void {
@@ -137,7 +125,8 @@ export class GraphicsUtils {
     item: Item,
     x: number,
     y: number,
-    size: number = 60
+    size: number = 60,
+    interactive: boolean = true
   ): Phaser.GameObjects.Container {
     const container = scene.add.container(x, y);
     const shape = this.createItemShape(scene, item, size);
@@ -149,7 +138,12 @@ export class GraphicsUtils {
 
     container.add([shape, label]);
     container.setSize(size, size + 20);
-    container.setInteractive(new Phaser.Geom.Rectangle(-size / 2, -size / 2, size, size + 20), Phaser.Geom.Rectangle.Contains);
+
+    if (interactive) {
+      const hitZone = scene.add.zone(x, y, size, size + 20).setInteractive({ useHandCursor: true });
+      container.setData('hitZone', hitZone);
+      container.on('destroy', () => hitZone.destroy());
+    }
 
     return container;
   }

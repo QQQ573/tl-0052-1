@@ -3,18 +3,20 @@ import { MenuScene } from './scenes/MenuScene';
 import { GameScene } from './scenes/GameScene';
 import { ResultScene } from './scenes/ResultScene';
 
-const width = Math.min(window.innerWidth, 1024);
-const height = Math.min(window.innerHeight, 768);
+const GAME_WIDTH = 1024;
+const GAME_HEIGHT = 768;
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
   parent: 'game-container',
-  width,
-  height,
+  width: GAME_WIDTH,
+  height: GAME_HEIGHT,
   backgroundColor: '#1a1a2e',
   scale: {
     mode: Phaser.Scale.FIT,
-    autoCenter: Phaser.Scale.CENTER_BOTH
+    autoCenter: Phaser.Scale.CENTER_BOTH,
+    width: GAME_WIDTH,
+    height: GAME_HEIGHT
   },
   input: {
     activePointers: 2,
@@ -32,11 +34,4 @@ const config: Phaser.Types.Core.GameConfig = {
   }
 };
 
-const game = new Phaser.Game(config);
-
-window.addEventListener('resize', () => {
-  game.scale.resize(
-    Math.min(window.innerWidth, 1024),
-    Math.min(window.innerHeight, 768)
-  );
-});
+new Phaser.Game(config);

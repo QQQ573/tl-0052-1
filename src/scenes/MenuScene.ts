@@ -115,28 +115,28 @@ export class MenuScene extends Phaser.Scene {
 
     const progress = StorageManager.getLevelProgress(level.id);
     if (progress) {
-      GraphicsUtils.drawStars(this, 0, -height / 2 + 110, progress.stars, 3, 24);
-      this.add.text(0, -height / 2 + 150, `最高分: ${progress.bestScore}`, {
+      GraphicsUtils.drawStars(this, x, y - height / 2 + 110, progress.stars, 3, 24);
+      this.add.text(x, y - height / 2 + 150, `最高分: ${progress.bestScore}`, {
         fontSize: '14px',
         color: '#ffffff'
       }).setOrigin(0.5);
     } else {
-      this.add.text(0, -height / 2 + 110, '未通关', {
+      this.add.text(x, y - height / 2 + 110, '未通关', {
         fontSize: '16px',
         color: '#888888'
       }).setOrigin(0.5);
     }
 
-    const infoY = -height / 2 + 190;
-    this.add.text(-width / 2 + 20, infoY, `订单数: ${level.totalOrders}`, {
+    const infoY = y - height / 2 + 190;
+    this.add.text(x - width / 2 + 20, infoY, `订单数: ${level.totalOrders}`, {
       fontSize: '14px',
       color: '#cccccc'
     });
-    this.add.text(-width / 2 + 20, infoY + 25, `时限: ${GraphicsUtils.formatTime(level.timeLimit)}`, {
+    this.add.text(x - width / 2 + 20, infoY + 25, `时限: ${GraphicsUtils.formatTime(level.timeLimit)}`, {
       fontSize: '14px',
       color: '#cccccc'
     });
-    this.add.text(-width / 2 + 20, infoY + 50, `食材数: ${level.items.length}`, {
+    this.add.text(x - width / 2 + 20, infoY + 50, `食材数: ${level.items.length}`, {
       fontSize: '14px',
       color: '#cccccc'
     });
@@ -162,14 +162,17 @@ export class MenuScene extends Phaser.Scene {
     container.add(btnText);
 
     container.setSize(width, height);
-    container.setInteractive(new Phaser.Geom.Rectangle(-width / 2, -height / 2, width, height), Phaser.Geom.Rectangle.Contains);
 
-    container.on('pointerover', () => {
+    const hitZone = this.add.zone(x, y, width, height).setInteractive({ useHandCursor: true });
+    container.setData('hitZone', hitZone);
+    container.on('destroy', () => hitZone.destroy());
+
+    hitZone.on('pointerover', () => {
       this.selectedLevelIndex = index;
       this.updateCardSelection();
     });
 
-    container.on('pointerdown', () => {
+    hitZone.on('pointerdown', () => {
       this.selectedLevelIndex = index;
       this.audioManager.playClick();
       this.startSelectedLevel();
