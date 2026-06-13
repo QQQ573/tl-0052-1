@@ -3,7 +3,7 @@ import { getLevelById, getItemById, type Level, type Order, type Item } from '@/
 import { GameStateManager } from '@/game/GameStateManager';
 import { AudioManager } from '@/game/AudioManager';
 import { GraphicsUtils } from '@/utils/GraphicsUtils';
-import type { LevelResult, DraggedItem } from '@/types/game';
+import type { LevelResult, DraggedItem, OrderResult } from '@/types/game';
 
 export class GameScene extends Phaser.Scene {
   private level!: Level;
@@ -72,7 +72,7 @@ export class GameScene extends Phaser.Scene {
     this.gameState.on('order-start', (order: Order) => this.onOrderStart(order));
     this.gameState.on('correct-placement', (_itemId: string, stepIndex: number) => this.onCorrectPlacement(stepIndex));
     this.gameState.on('wrong-placement', (_itemId: string, _expected: string, _stepIndex: number) => this.onWrongPlacement());
-    this.gameState.on('order-complete', () => this.onOrderComplete());
+    this.gameState.on('order-complete', (result: OrderResult) => this.onOrderComplete(result));
     this.gameState.on('order-remake', () => this.onOrderRemake());
     this.gameState.on('time-warning', () => this.onTimeWarning());
     this.gameState.on('level-complete', (result: LevelResult) => this.onLevelComplete(result));
@@ -392,7 +392,7 @@ export class GameScene extends Phaser.Scene {
     const order = this.gameState.getCurrentOrder();
     if (!order) return;
 
-    this.addPlacedItem(this.draggedItem.item, stepIndex, order.steps.length);
+    this.addPlacedItem(this.draggedItem.item, stepIndex);
 
     const itemIndex = this.conveyorItems.indexOf(this.draggedItem.sprite);
     if (itemIndex > -1) {
@@ -404,7 +404,7 @@ export class GameScene extends Phaser.Scene {
     this.updateUI();
   }
 
-  private addPlacedItem(item: Item, stepIndex: number, totalSteps: number): void {
+  private addPlacedItem(item: Item, stepIndex: number): void {
     const itemSize = 45;
     const stackSpacing = 18;
     const baseY = this.packingZoneY + this.packingZoneHeight / 2 - 60;
@@ -522,7 +522,7 @@ export class GameScene extends Phaser.Scene {
     this.updateUI();
   }
 
-  private onOrderComplete(): void {
+  private onOrderComplete(_result: OrderResult): void {
     this.audioManager.playComplete();
 
     const order = this.gameState.getCurrentOrder();

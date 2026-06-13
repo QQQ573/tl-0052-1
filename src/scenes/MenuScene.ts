@@ -2,12 +2,14 @@ import Phaser from 'phaser';
 import { levels, type Level } from '@/data/levels';
 import { StorageManager } from '@/game/StorageManager';
 import { AudioManager } from '@/game/AudioManager';
+import { achievementManager } from '@/game/AchievementManager';
 import { GraphicsUtils } from '@/utils/GraphicsUtils';
 
 export class MenuScene extends Phaser.Scene {
   private audioManager!: AudioManager;
   private selectedLevelIndex: number = 0;
   private levelCards: Phaser.GameObjects.Container[] = [];
+  private achievementBadge!: Phaser.GameObjects.Container;
 
   constructor() {
     super('MenuScene');
@@ -41,11 +43,13 @@ export class MenuScene extends Phaser.Scene {
       color: '#FFD700'
     }).setOrigin(0.5);
 
+    this.createAchievementButton();
+
     this.createLevelCards();
 
     const muteBtn = this.add.text(width - 50, 30, this.audioManager.isMutedSound() ? '🔇' : '🔊', {
       fontSize: '28px'
-    }).setOrigin(0.5).setInteractive();
+    }).setOrigin(0.5).setInteractive({ useHandCursor: true });
 
     muteBtn.on('pointerdown', () => {
       const enabled = this.audioManager.toggleMute();
@@ -56,6 +60,80 @@ export class MenuScene extends Phaser.Scene {
     this.input.keyboard?.on('keydown-LEFT', () => this.navigateLevels(-1));
     this.input.keyboard?.on('keydown-RIGHT', () => this.navigateLevels(1));
     this.input.keyboard?.on('keydown-ENTER', () => this.startSelectedLevel());
+  }
+
+  private createAchievementButton(): void {
+    const hasNew = achievementManager.hasNewUnlocks();
+    const unlockedCount = achievementManager.getUnlockedCount();
+    const totalCount = achievementManager.getTotalCount();
+
+    this.achievementBadge = this.add.container(50, 30);
+
+    const bg = this.add.graphics();
+    GraphicsUtils.drawRoundedRect(
+      bg,
+      0,
+      0,
+      140,
+      45,
+      10,
+      0x333344,
+      1,
+      0xFFD700,
+      0.6,
+      2
+    );
+    this.achievementBadge.add(bg);
+
+    const icon = this.add.text(20, 22, '🏆', {
+      fontSize: '22px'
+    }).setOrigin(0, 0.5);
+    this.achievementBadge.add(icon);
+
+    const text = this.add.text(50, 22, `成就 ${unlockedCount}/${totalCount}`, {
+      fontSize: '14px',
+      fontStyle: 'bold',
+      color: '#ffffff'
+    }).setOrigin(0, 0.5);
+    this.achievementBadge.add(text);
+
+    if (hasNew) {
+      const newBadge = this.add.graphics();
+      newBadge.fillStyle(0xFFD700, 1);
+      newBadge.fillCircle(125, 10, 8);
+      this.achievementBadge.add(newBadge);
+
+      const newBadgeBorder = this.add.graphics();
+      newBadgeBorder.lineStyle(2, 0xffffff, 1);
+      newBadgeBorder.strokeCircle(125, 10, 8);
+      this.achievementBadge.add(newBadgeBorder);
+
+      this.tweens.add({
+        targets: [newBadge, newBadgeBorder],
+        alpha: { from: 1, to: 0.3 },
+        scale: { from: 1, to: 1.3 },
+        duration: 500,
+        yoyo: true,
+        repeat: -1
+      });
+    }
+
+    const hitZone = this.add.zone(70, 22, 140, 45).setInteractive({ useHandCursor: true });
+    this.achievementBadge.add(hitZone);
+
+    hitZone.on('pointerover', () => {
+      this.achievementBadge.setScale(1.05);
+    });
+
+    hitZone.on('pointerout', () => {
+      this.achievementBadge.setScale(1);
+    });
+
+    hitZone.on('pointerdown', () => {
+      this.audioManager.playClick();
+      achievementManager.clearNewUnlocks();
+      this.scene.start('AchievementScene');
+    });
   }
 
   private createLevelCards(): void {

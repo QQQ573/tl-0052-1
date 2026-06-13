@@ -1,13 +1,16 @@
 import Phaser from 'phaser';
 import { StorageManager } from '@/game/StorageManager';
 import { AudioManager } from '@/game/AudioManager';
+import { achievementManager } from '@/game/AchievementManager';
 import { GraphicsUtils } from '@/utils/GraphicsUtils';
 import type { LevelResult } from '@/types/game';
 import { getItemById, type Level } from '@/data/levels';
+import type { Achievement } from '@/data/achievements';
 
 export class ResultScene extends Phaser.Scene {
   private result!: LevelResult;
   private audioManager!: AudioManager;
+  private newlyUnlocked: Achievement[] = [];
 
   constructor() {
     super('ResultScene');
@@ -35,6 +38,17 @@ export class ResultScene extends Phaser.Scene {
       this.result.totalScore,
       this.result.totalTime
     );
+
+    StorageManager.addGameHistory(level.id, this.result.completed, this.result.stars);
+
+    if (this.result.completed) {
+      const unlocked = achievementManager.checkAndUpdate({
+        levelResult: this.result,
+        orderResults: this.result.orderResults,
+        totalStars: StorageManager.getTotalStars()
+      });
+      this.newlyUnlocked = unlocked;
+    }
 
     const headerY = 50;
     const titleText = this.result.completed ? '关卡完成!' : '时间到!';
@@ -96,6 +110,10 @@ export class ResultScene extends Phaser.Scene {
       });
     }
 
+    if (this.newlyUnlocked.length > 0) {
+      this.showAchievementUnlock();
+    }
+
     const btnY = height - 80;
     const retryBtn = this.createButton(width / 2 - 130, btnY, '再玩一次', level.primaryColor, level.secondaryColor);
     retryBtn.on('pointerdown', () => {
@@ -107,6 +125,81 @@ export class ResultScene extends Phaser.Scene {
     menuBtn.on('pointerdown', () => {
       this.audioManager.playClick();
       this.scene.start('MenuScene');
+    });
+
+    this.audioManager.playComplete();
+  }
+
+  private showAchievementUnlock(): void {
+    const width = this.scale.width;
+    const achievement = this.newlyUnlocked[0];
+
+    if (!achievement) return;
+
+    const popupY = 180;
+
+    const popupBg = this.add.graphics();
+    GraphicsUtils.drawRoundedRect(
+      popupBg,
+      width / 2 - 200,
+      popupY - 50,
+      400,
+      100,
+      16,
+      0x2a2a3e,
+      0.95,
+      parseInt(achievement.color.replace('#', ''), 16),
+      1,
+      3
+    );
+
+    const iconBg = this.add.graphics();
+    GraphicsUtils.drawRoundedRect(
+      iconBg,
+      width / 2 - 180,
+      popupY - 35,
+      70,
+      70,
+      12,
+      parseInt(achievement.color.replace('#', ''), 16),
+      1
+    );
+
+    const icon = this.add.text(width / 2 - 145, popupY, achievement.icon, {
+      fontSize: '36px'
+    }).setOrigin(0.5);
+
+    const title = this.add.text(width / 2 - 90, popupY - 25, '🎉 成就解锁!', {
+      fontSize: '16px',
+      fontStyle: 'bold',
+      color: '#FFD700'
+    }).setOrigin(0, 0.5);
+
+    const name = this.add.text(width / 2 - 90, popupY, achievement.name, {
+      fontSize: '20px',
+      fontStyle: 'bold',
+      color: '#ffffff'
+    }).setOrigin(0, 0.5);
+
+    const desc = this.add.text(width / 2 - 90, popupY + 25, achievement.description, {
+      fontSize: '13px',
+      color: '#aaaaaa'
+    }).setOrigin(0, 0.5);
+
+    this.tweens.add({
+      targets: [popupBg, iconBg, icon, title, name, desc],
+      alpha: { from: 0, to: 1 },
+      y: { from: popupY - 20, to: popupY },
+      duration: 500,
+      ease: 'Back.out'
+    });
+
+    this.tweens.add({
+      targets: icon,
+      scale: { from: 0.5, to: 1.2 },
+      duration: 300,
+      yoyo: true,
+      delay: 500
     });
 
     this.audioManager.playComplete();

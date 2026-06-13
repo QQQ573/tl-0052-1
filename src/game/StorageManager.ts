@@ -1,3 +1,6 @@
+import type { Achievement } from '@/data/achievements';
+import { achievements } from '@/data/achievements';
+
 const STORAGE_KEY = 'fast_food_training_progress';
 
 export type LevelProgress = {
@@ -13,13 +16,17 @@ export type GameProgress = {
   totalStars: number;
   soundEnabled: boolean;
   musicEnabled: boolean;
+  achievements: Achievement[];
+  gameHistory: { levelId: string; completed: boolean; stars: number }[];
 };
 
 const defaultProgress: GameProgress = {
   levels: {},
   totalStars: 0,
   soundEnabled: true,
-  musicEnabled: true
+  musicEnabled: true,
+  achievements: achievements.map(a => ({ ...a, unlocked: false, progress: 0 })),
+  gameHistory: []
 };
 
 export class StorageManager {
@@ -35,12 +42,28 @@ export class StorageManager {
     try {
       const data = localStorage.getItem(STORAGE_KEY);
       if (data) {
-        return { ...defaultProgress, ...JSON.parse(data) };
+        const saved = JSON.parse(data);
+        return {
+          ...defaultProgress,
+          ...saved,
+          achievements: this.mergeAchievements(saved.achievements || [])
+        };
       }
     } catch (e) {
       console.error('Failed to load progress:', e);
     }
     return { ...defaultProgress };
+  }
+
+  private static mergeAchievements(savedAchievements: Achievement[]): Achievement[] {
+    return achievements.map(achievement => {
+      const saved = savedAchievements.find(a => a.id === achievement.id);
+      return {
+        ...achievement,
+        unlocked: saved?.unlocked || false,
+        progress: saved?.progress || 0
+      };
+    });
   }
 
   static updateLevelProgress(levelId: string, stars: number, score: number, time: number): void {
@@ -89,6 +112,31 @@ export class StorageManager {
 
   static isMusicEnabled(): boolean {
     return this.loadProgress().musicEnabled;
+  }
+
+  static saveAchievements(achievements: Achievement[]): void {
+    const progress = this.loadProgress();
+    progress.achievements = achievements;
+    this.saveProgress(progress);
+  }
+
+  static getAchievements(): Achievement[] {
+    const progress = this.loadProgress();
+    return progress.achievements;
+  }
+
+  static addGameHistory(levelId: string, completed: boolean, stars: number): void {
+    const progress = this.loadProgress();
+    progress.gameHistory.push({ levelId, completed, stars });
+    if (progress.gameHistory.length > 50) {
+      progress.gameHistory = progress.gameHistory.slice(-50);
+    }
+    this.saveProgress(progress);
+  }
+
+  static getGameHistory(): { levelId: string; completed: boolean; stars: number }[] {
+    const progress = this.loadProgress();
+    return progress.gameHistory;
   }
 
   static resetProgress(): void {

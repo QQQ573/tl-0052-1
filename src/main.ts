@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { MenuScene } from './scenes/MenuScene';
 import { GameScene } from './scenes/GameScene';
 import { ResultScene } from './scenes/ResultScene';
+import { AchievementScene } from './scenes/AchievementScene';
 
 const GAME_WIDTH = 1024;
 const GAME_HEIGHT = 768;
@@ -24,7 +25,7 @@ const config: Phaser.Types.Core.GameConfig = {
       capture: true
     }
   },
-  scene: [MenuScene, GameScene, ResultScene],
+  scene: [MenuScene, GameScene, ResultScene, AchievementScene],
   physics: {
     default: 'arcade',
     arcade: {
