@@ -1,0 +1,219 @@
+{
+  "id": "kfc",
+  "name": "肯德基炸鸡堡线",
+  "brand": "kfc",
+  "primaryColor": "#E4002B",
+  "secondaryColor": "#FFFFFF",
+  "bgColor": "#1C1C1C",
+  "totalOrders": 10,
+  "timeLimit": 330,
+  "items": [
+    {
+      "id": "bun_top",
+      "name": "面包顶",
+      "color": "#F4D03F",
+      "shape": "half-circle"
+    },
+    {
+      "id": "bun_bottom",
+      "name": "面包底",
+      "color": "#E67E22",
+      "shape": "half-circle"
+    },
+    {
+      "id": "fried_chicken",
+      "name": "炸鸡排",
+      "color": "#D35400",
+      "shape": "irregular"
+    },
+    {
+      "id": "cheese",
+      "name": "芝士片",
+      "color": "#FFA500",
+      "shape": "square"
+    },
+    {
+      "id": "lettuce",
+      "name": "生菜",
+      "color": "#2ECC71",
+      "shape": "leaf"
+    },
+    {
+      "id": "tomato",
+      "name": "番茄",
+      "color": "#E74C3C",
+      "shape": "slice"
+    },
+    {
+      "id": "mayo",
+      "name": "蛋黄酱",
+      "color": "#F8F9F9",
+      "shape": "splash"
+    },
+    {
+      "id": "bbq_sauce",
+      "name": "BBQ酱",
+      "color": "#7B241C",
+      "shape": "splash"
+    },
+    {
+      "id": "bacon",
+      "name": "培根",
+      "color": "#943126",
+      "shape": "strip"
+    }
+  ],
+  "distractors": [
+    {
+      "id": "patty",
+      "name": "牛肉饼",
+      "color": "#8B4513",
+      "shape": "circle"
+    },
+    {
+      "id": "fish_patty",
+      "name": "鱼排",
+      "color": "#85C1E9",
+      "shape": "rectangle"
+    }
+  ],
+  "orders": [
+    {
+      "id": "zinger",
+      "name": "劲脆鸡腿堡",
+      "steps": [
+        "bun_bottom",
+        "mayo",
+        "lettuce",
+        "fried_chicken",
+        "bun_top"
+      ],
+      "exclusions": ["cheese", "tomato", "bacon"]
+    },
+    {
+      "id": "zinger_cheese",
+      "name": "劲脆鸡腿堡 加芝士",
+      "steps": [
+        "bun_bottom",
+        "mayo",
+        "lettuce",
+        "cheese",
+        "fried_chicken",
+        "bun_top"
+      ],
+      "exclusions": ["tomato", "bacon"]
+    },
+    {
+      "id": "bbq_bacon",
+      "name": "BBQ培根鸡腿堡",
+      "steps": [
+        "bun_bottom",
+        "bbq_sauce",
+        "lettuce",
+        "tomato",
+        "bacon",
+        "cheese",
+        "fried_chicken",
+        "bun_top"
+      ],
+      "exclusions": ["mayo"]
+    },
+    {
+      "id": "spicy_zinger",
+      "name": "香辣鸡腿堡",
+      "steps": [
+        "bun_bottom",
+        "bbq_sauce",
+        "lettuce",
+        "fried_chicken",
+        "bun_top"
+      ],
+      "exclusions": ["cheese", "tomato", "bacon", "mayo"]
+    },
+    {
+      "id": "mighty_zinger",
+      "name": "超级鸡腿堡",
+      "steps": [
+        "bun_bottom",
+        "mayo",
+        "lettuce",
+        "tomato",
+        "cheese",
+        "fried_chicken",
+        "bacon",
+        "bun_top"
+      ],
+      "exclusions": ["bbq_sauce"]
+    },
+    {
+      "id": "zinger_no_mayo",
+      "name": "劲脆鸡腿堡 不要蛋黄酱",
+      "steps": [
+        "bun_bottom",
+        "lettuce",
+        "fried_chicken",
+        "bun_top"
+      ],
+      "exclusions": ["mayo", "cheese", "tomato", "bacon"]
+    },
+    {
+      "id": "double_zinger",
+      "name": "双层鸡腿堡",
+      "steps": [
+        "bun_bottom",
+        "mayo",
+        "lettuce",
+        "fried_chicken",
+        "cheese",
+        "fried_chicken",
+        "bun_top"
+      ],
+      "exclusions": ["tomato", "bacon", "bbq_sauce"]
+    },
+    {
+      "id": "cheese_bacon_zinger",
+      "name": "芝士培根鸡腿堡",
+      "steps": [
+        "bun_bottom",
+        "mayo",
+        "lettuce",
+        "bacon",
+        "cheese",
+        "fried_chicken",
+        "bun_top"
+      ],
+      "exclusions": ["tomato", "bbq_sauce"]
+    },
+    {
+      "id": "veggie_chicken",
+      "name": "鲜蔬鸡腿堡",
+      "steps": [
+        "bun_bottom",
+        "mayo",
+        "lettuce",
+        "tomato",
+        "fried_chicken",
+        "bun_top"
+      ],
+      "exclusions": ["cheese", "bacon", "bbq_sauce"]
+    },
+    {
+      "id": "ultimate_zinger",
+      "name": "至尊鸡腿堡",
+      "steps": [
+        "bun_bottom",
+        "mayo",
+        "bbq_sauce",
+        "lettuce",
+        "tomato",
+        "bacon",
+        "cheese",
+        "fried_chicken",
+        "cheese",
+        "bacon",
+        "bun_top"
+      ],
+      "exclusions": []
+    }
+  ]
+}

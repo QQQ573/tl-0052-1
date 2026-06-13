@@ -1,0 +1,226 @@
+{
+  "id": "wallace",
+  "name": "华莱士卷饼线",
+  "brand": "wallace",
+  "primaryColor": "#009A44",
+  "secondaryColor": "#FFD100",
+  "bgColor": "#0A1F0A",
+  "totalOrders": 10,
+  "timeLimit": 360,
+  "items": [
+    {
+      "id": "tortilla",
+      "name": "面饼",
+      "color": "#F5CBA7",
+      "shape": "circle"
+    },
+    {
+      "id": "grilled_chicken",
+      "name": "板烧鸡",
+      "color": "#CD6155",
+      "shape": "strip"
+    },
+    {
+      "id": "fried_chicken",
+      "name": "炸鸡",
+      "color": "#D35400",
+      "shape": "irregular"
+    },
+    {
+      "id": "cheese",
+      "name": "芝士片",
+      "color": "#FFA500",
+      "shape": "square"
+    },
+    {
+      "id": "lettuce",
+      "name": "生菜",
+      "color": "#2ECC71",
+      "shape": "leaf"
+    },
+    {
+      "id": "tomato",
+      "name": "番茄",
+      "color": "#E74C3C",
+      "shape": "slice"
+    },
+    {
+      "id": "cucumber",
+      "name": "黄瓜",
+      "color": "#1ABC9C",
+      "shape": "strip"
+    },
+    {
+      "id": "sauce",
+      "name": "甜面酱",
+      "color": "#5D4E37",
+      "shape": "splash"
+    },
+    {
+      "id": "spicy_sauce",
+      "name": "辣酱",
+      "color": "#C0392B",
+      "shape": "splash"
+    },
+    {
+      "id": "fries",
+      "name": "薯条",
+      "color": "#F4D03F",
+      "shape": "strip"
+    }
+  ],
+  "distractors": [
+    {
+      "id": "patty",
+      "name": "牛肉饼",
+      "color": "#8B4513",
+      "shape": "circle"
+    },
+    {
+      "id": "bacon",
+      "name": "培根",
+      "color": "#943126",
+      "shape": "strip"
+    }
+  ],
+  "orders": [
+    {
+      "id": "grilled_chicken_wrap",
+      "name": "板烧鸡卷",
+      "steps": [
+        "tortilla",
+        "sauce",
+        "lettuce",
+        "cucumber",
+        "grilled_chicken",
+        "fries"
+      ],
+      "exclusions": ["cheese", "tomato", "spicy_sauce", "fried_chicken"]
+    },
+    {
+      "id": "fried_chicken_wrap",
+      "name": "炸鸡卷",
+      "steps": [
+        "tortilla",
+        "sauce",
+        "lettuce",
+        "cucumber",
+        "fried_chicken",
+        "fries"
+      ],
+      "exclusions": ["cheese", "tomato", "spicy_sauce", "grilled_chicken"]
+    },
+    {
+      "id": "spicy_grilled_wrap",
+      "name": "香辣板烧鸡卷",
+      "steps": [
+        "tortilla",
+        "sauce",
+        "spicy_sauce",
+        "lettuce",
+        "cucumber",
+        "grilled_chicken",
+        "fries"
+      ],
+      "exclusions": ["cheese", "tomato", "fried_chicken"]
+    },
+    {
+      "id": "cheese_chicken_wrap",
+      "name": "芝士鸡卷",
+      "steps": [
+        "tortilla",
+        "sauce",
+        "lettuce",
+        "cucumber",
+        "cheese",
+        "grilled_chicken",
+        "fries"
+      ],
+      "exclusions": ["tomato", "spicy_sauce", "fried_chicken"]
+    },
+    {
+      "id": "veggie_wrap",
+      "name": "鲜蔬卷",
+      "steps": [
+        "tortilla",
+        "sauce",
+        "lettuce",
+        "cucumber",
+        "tomato",
+        "fries"
+      ],
+      "exclusions": ["cheese", "grilled_chicken", "fried_chicken", "spicy_sauce"]
+    },
+    {
+      "id": "no_sauce_wrap",
+      "name": "板烧鸡卷 不要甜面酱",
+      "steps": [
+        "tortilla",
+        "lettuce",
+        "cucumber",
+        "grilled_chicken",
+        "fries"
+      ],
+      "exclusions": ["sauce", "cheese", "tomato", "spicy_sauce", "fried_chicken"]
+    },
+    {
+      "id": "double_chicken_wrap",
+      "name": "双鸡卷",
+      "steps": [
+        "tortilla",
+        "sauce",
+        "lettuce",
+        "cucumber",
+        "grilled_chicken",
+        "fried_chicken",
+        "fries"
+      ],
+      "exclusions": ["cheese", "tomato", "spicy_sauce"]
+    },
+    {
+      "id": "deluxe_wrap",
+      "name": "豪华卷",
+      "steps": [
+        "tortilla",
+        "sauce",
+        "spicy_sauce",
+        "lettuce",
+        "cucumber",
+        "tomato",
+        "cheese",
+        "grilled_chicken",
+        "fries"
+      ],
+      "exclusions": ["fried_chicken"]
+    },
+    {
+      "id": "no_cucumber_wrap",
+      "name": "板烧鸡卷 不要黄瓜",
+      "steps": [
+        "tortilla",
+        "sauce",
+        "lettuce",
+        "grilled_chicken",
+        "fries"
+      ],
+      "exclusions": ["cucumber", "cheese", "tomato", "spicy_sauce", "fried_chicken"]
+    },
+    {
+      "id": "ultimate_wrap",
+      "name": "至尊卷",
+      "steps": [
+        "tortilla",
+        "sauce",
+        "spicy_sauce",
+        "lettuce",
+        "cucumber",
+        "tomato",
+        "cheese",
+        "grilled_chicken",
+        "fried_chicken",
+        "fries"
+      ],
+      "exclusions": []
+    }
+  ]
+}

@@ -1,0 +1,230 @@
+{
+  "id": "mcdonalds",
+  "name": "麦当劳经典牛堡线",
+  "brand": "mcdonalds",
+  "primaryColor": "#FFC72C",
+  "secondaryColor": "#DA291C",
+  "bgColor": "#27251F",
+  "totalOrders": 10,
+  "timeLimit": 300,
+  "items": [
+    {
+      "id": "bun_top",
+      "name": "面包顶",
+      "color": "#F4D03F",
+      "shape": "half-circle"
+    },
+    {
+      "id": "bun_bottom",
+      "name": "面包底",
+      "color": "#E67E22",
+      "shape": "half-circle"
+    },
+    {
+      "id": "patty",
+      "name": "牛肉饼",
+      "color": "#8B4513",
+      "shape": "circle"
+    },
+    {
+      "id": "cheese",
+      "name": "芝士片",
+      "color": "#FFA500",
+      "shape": "square"
+    },
+    {
+      "id": "lettuce",
+      "name": "生菜",
+      "color": "#2ECC71",
+      "shape": "leaf"
+    },
+    {
+      "id": "tomato",
+      "name": "番茄",
+      "color": "#E74C3C",
+      "shape": "slice"
+    },
+    {
+      "id": "pickle",
+      "name": "酸黄瓜",
+      "color": "#27AE60",
+      "shape": "slice"
+    },
+    {
+      "id": "onion",
+      "name": "洋葱",
+      "color": "#D7BDE2",
+      "shape": "ring"
+    },
+    {
+      "id": "sauce",
+      "name": "酱料",
+      "color": "#F39C12",
+      "shape": "splash"
+    }
+  ],
+  "distractors": [
+    {
+      "id": "fish_patty",
+      "name": "鱼排",
+      "color": "#85C1E9",
+      "shape": "rectangle"
+    },
+    {
+      "id": "chicken_patty",
+      "name": "鸡排",
+      "color": "#D4AC0D",
+      "shape": "irregular"
+    }
+  ],
+  "orders": [
+    {
+      "id": "double_cheese",
+      "name": "双层吉士堡",
+      "steps": [
+        "bun_bottom",
+        "sauce",
+        "patty",
+        "cheese",
+        "patty",
+        "cheese",
+        "onion",
+        "pickle",
+        "bun_top"
+      ],
+      "exclusions": []
+    },
+    {
+      "id": "double_cheese_no_pickle",
+      "name": "双层吉士堡 不要酸黄瓜",
+      "steps": [
+        "bun_bottom",
+        "sauce",
+        "patty",
+        "cheese",
+        "patty",
+        "cheese",
+        "onion",
+        "bun_top"
+      ],
+      "exclusions": ["pickle"]
+    },
+    {
+      "id": "big_mac",
+      "name": "巨无霸",
+      "steps": [
+        "bun_bottom",
+        "sauce",
+        "lettuce",
+        "cheese",
+        "patty",
+        "pickle",
+        "onion",
+        "bun_top"
+      ],
+      "exclusions": ["tomato"]
+    },
+    {
+      "id": "quarter_pounder",
+      "name": " Quarter Pounder",
+      "steps": [
+        "bun_bottom",
+        "sauce",
+        "cheese",
+        "patty",
+        "onion",
+        "pickle",
+        "bun_top"
+      ],
+      "exclusions": ["lettuce", "tomato"]
+    },
+    {
+      "id": "hamburger",
+      "name": "汉堡包",
+      "steps": [
+        "bun_bottom",
+        "sauce",
+        "patty",
+        "pickle",
+        "onion",
+        "bun_top"
+      ],
+      "exclusions": ["cheese", "lettuce", "tomato"]
+    },
+    {
+      "id": "cheeseburger",
+      "name": "吉士汉堡",
+      "steps": [
+        "bun_bottom",
+        "sauce",
+        "patty",
+        "cheese",
+        "pickle",
+        "onion",
+        "bun_top"
+      ],
+      "exclusions": ["lettuce", "tomato"]
+    },
+    {
+      "id": "double_cheese_extra_cheese",
+      "name": "双层吉士堡 加芝士",
+      "steps": [
+        "bun_bottom",
+        "sauce",
+        "patty",
+        "cheese",
+        "cheese",
+        "patty",
+        "cheese",
+        "onion",
+        "pickle",
+        "bun_top"
+      ],
+      "exclusions": []
+    },
+    {
+      "id": "burger_no_sauce",
+      "name": "汉堡包 不要酱料",
+      "steps": [
+        "bun_bottom",
+        "patty",
+        "pickle",
+        "onion",
+        "bun_top"
+      ],
+      "exclusions": ["sauce"]
+    },
+    {
+      "id": "veggie_burger",
+      "name": "蔬菜堡",
+      "steps": [
+        "bun_bottom",
+        "sauce",
+        "lettuce",
+        "tomato",
+        "cheese",
+        "onion",
+        "bun_top"
+      ],
+      "exclusions": ["patty", "pickle"]
+    },
+    {
+      "id": "mega_double",
+      "name": "超级双层堡",
+      "steps": [
+        "bun_bottom",
+        "sauce",
+        "patty",
+        "cheese",
+        "lettuce",
+        "tomato",
+        "patty",
+        "cheese",
+        "pickle",
+        "onion",
+        "bun_top"
+      ],
+      "exclusions": []
+    }
+  ]
+}

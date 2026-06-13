@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+  fast-food-training-game:
+    build: .
+    container_name: fast-food-training-game
+    ports:
+      - "8080:80"
+    restart: unless-stopped
