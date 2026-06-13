@@ -114,7 +114,23 @@ export class ResultScene extends Phaser.Scene {
       this.showAchievementUnlock();
     }
 
-    const btnY = height - 80;
+    const errorKeys = Object.keys(this.result.errorStepCounts);
+    const hasWeakSteps = this.result.completed && errorKeys.length > 0;
+
+    let btnY = height - 80;
+
+    if (hasWeakSteps) {
+      const weakSteps = this.extractWeakSteps(errorKeys);
+      
+      const sandboxBtn = this.createButton(width / 2, btnY, '🎯 弱项复训', '#E74C3C', '#ffffff');
+      sandboxBtn.on('pointerdown', () => {
+        this.audioManager.playClick();
+        this.scene.start('SandboxScene', { level, weakSteps });
+      });
+
+      btnY += 55;
+    }
+
     const retryBtn = this.createButton(width / 2 - 130, btnY, '再玩一次', level.primaryColor, level.secondaryColor);
     retryBtn.on('pointerdown', () => {
       this.audioManager.playClick();
@@ -128,6 +144,21 @@ export class ResultScene extends Phaser.Scene {
     });
 
     this.audioManager.playComplete();
+  }
+
+  private extractWeakSteps(errorKeys: string[]): string[] {
+    const stepCounts: Record<string, number> = {};
+
+    errorKeys.forEach(key => {
+      const parts = key.split('_before_');
+      const expectedId = parts[0];
+      stepCounts[expectedId] = (stepCounts[expectedId] || 0) + this.result.errorStepCounts[key];
+    });
+
+    return Object.entries(stepCounts)
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 3)
+      .map(([id]) => id);
   }
 
   private showAchievementUnlock(): void {
